@@ -14,7 +14,7 @@
 3. Generations slider'ını **500**'e ayarla, diğer parametreler **default**
 4. Sunum çözünürlüğünü 1280×800 veya 1920×1080 yap; **dark mode kapalı** olsun (kontrol panelindeki etiketler beyaz arka planda daha okunaklı)
 5. İkinci sekmede `/experiments` sayfasını arka plana hazırla — sekme arası geçiş hızlı olsun
-6. Editörde `lib/ga.ts` dosyasını üçüncü pencerede aç (Member 2 kullanacak)
+6. Editörde `lib/ga.ts` dosyasını üçüncü pencerede aç (Anıl kullanacak)
 7. **Kritik**: Demo başlamadan **1 kere Reset → Start** kombinasyonu deneyin. Çalıştığını gör, sonra Reset'le. (Hot-reload kalıntısı olmaması için.)
 
 ---
@@ -23,15 +23,15 @@
 
 | Bölüm | Süre | Kim | Ekran | Ne yapıyor |
 |---|---|---|---|---|
-| 1. Problem & motivasyon | 3 dk | **Üye 1** | Ana sayfa (berlin52, durağan) | TSP'yi tanıt, app'i aç |
-| 2. Algoritma & metodoloji | 3 dk | **Üye 2** | Ana sayfa + editör (`lib/ga.ts`) | Operatörleri açıkla, kontrolleri göster |
-| 3. Canlı çalıştırma & deneyler | 3 dk | **Üye 3** | Ana sayfa → `/experiments` | GA'yı çalıştır, deney tablosunu göster |
-| 4. Sonuçlar, çıkarımlar & gelecek iş | 3 dk | **Üye 4** | Konvergence grafiği + repo | Bulguları özetle, future work |
+| 1. Problem & motivasyon | 3 dk | **Emre Yıldız** | Ana sayfa (berlin52, durağan) | TSP'yi tanıt, app'i aç |
+| 2. Algoritma & metodoloji | 3 dk | **Anıl Aygün** | Ana sayfa + editör (`lib/ga.ts`) | Operatörleri açıkla, kontrolleri göster |
+| 3. Canlı çalıştırma & deneyler | 3 dk | **Mustafa Yiğit Güzel** | Ana sayfa → `/experiments` | GA'yı çalıştır, deney tablosunu göster |
+| 4. Sonuçlar, çıkarımlar & gelecek iş | 3 dk | **Meriç Özkayagan** | Konvergence grafiği + repo | Bulguları özetle, future work |
 | Q&A | 3-5 dk | Hepsi | — | Sorulara dağıtın |
 
 ---
 
-## ÜYE 1 — Problem & Motivasyon (3 dakika)
+## EMRE YILDIZ — Problem & Motivasyon (3 dakika)
 
 **Hedef**: Dinleyici "Bu insanlar neyi neden çözüyor?" sorusunun cevabını alsın.
 
@@ -39,7 +39,7 @@
 
 ### Konuşma metni
 
-> Merhaba, biz [Üye 1, Üye 2, Üye 3, Üye 4]. Bahar dönemi Evolutionary Computing dersi proje demosuna hoş geldiniz. Projemizin konusu **Gezgin Satıcı Problemi'ne Genetik Algoritma uygulaması**.
+> Merhaba, biz [Emre, Anıl, Mustafa, Meriç]. Bahar dönemi Evolutionary Computing dersi proje demosuna hoş geldiniz. Projemizin konusu **Gezgin Satıcı Problemi'ne Genetik Algoritma uygulaması**.
 >
 > Önce problem: ekranda gördüğünüz 52 kırmızı nokta, **TSPLIB'in berlin52** isimli klasik benchmark'ı — Berlin'deki 52 lokasyon. Problem basit görünüyor: bu 52 şehri **her birini tam bir kez ziyaret eden ve başlangıç noktasına dönen** en kısa turu bul.
 >
@@ -54,13 +54,13 @@
 > 2. Klasik genetik operatörleri **kontrollü deneylerle** karşılaştırmak,
 > 3. Evrimi tarayıcıda **canlı görselleştirmek** — şu an kullandığımız uygulama.
 >
-> Şimdi sözü algoritmamızı detaylandıracak [Üye 2]'ye bırakıyorum.
+> Şimdi sözü algoritmamızı detaylandıracak [Anıl]'ye bırakıyorum.
 
-**Stage direction**: Konuşma boyunca fareyi noktaların üzerinde dolaştırmadan, sabit tut. "Start" butonuna **basma**; o iş Üye 3'ün.
+**Stage direction**: Konuşma boyunca fareyi noktaların üzerinde dolaştırmadan, sabit tut. "Start" butonuna **basma**; o iş Mustafa'ün.
 
 ---
 
-## ÜYE 2 — Algoritma & Metodoloji (3 dakika)
+## ANIL AYGÜN — Algoritma & Metodoloji (3 dakika)
 
 **Hedef**: Dinleyici GA'nın bileşenlerini ve neden bu seçimleri yaptığımızı anlasın.
 
@@ -93,13 +93,13 @@
 >
 > [Tekrar tarayıcıya dön]
 >
-> Şimdi gerçek bir koşturma için [Üye 3]'e geçiyorum.
+> Şimdi gerçek bir koşturma için [Mustafa]'e geçiyorum.
 
 **Stage direction**: Kod gösterimi opsiyonel; eğer zaman daralırsa atla. Sağ paneldeki dropdown'lara fareyle dokunmak yeterli görsel ipucu.
 
 ---
 
-## ÜYE 3 — Canlı Çalıştırma & Deneyler (3 dakika)
+## MUSTAFA YİĞİT GÜZEL — Canlı Çalıştırma & Deneyler (3 dakika)
 
 **Hedef**: GA'nın canlı çalıştığını ve parametrelerin ne kadar fark yarattığını göster.
 
@@ -131,7 +131,7 @@
 >
 > İşte en çarpıcı bulgu. **Roulette selection %74 sapmayla felaket** — neredeyse rastgele arama. Tournament k=5 ise %9.8. Bu 60+ puanlık fark. Sebep: roulette sığ uygunluk dağılımlarında seçim baskısını kaybeder. 1989'da Whitley'in tahmin ettiği şey, bizim uygulamamızda kanıtlandı.
 >
-> Detaylı bulguları [Üye 4] toparlayacak.
+> Detaylı bulguları [Meriç] toparlayacak.
 
 **Stage direction**:
 - Eğer "Start" tıklanınca bir şey hareket etmiyorsa **Reset → Start** kombinasyonunu dene
@@ -140,7 +140,7 @@
 
 ---
 
-## ÜYE 4 — Sonuçlar, Çıkarımlar & Gelecek İş (3 dakika)
+## MERİÇ ÖZKAYAGAN — Sonuçlar, Çıkarımlar & Gelecek İş (3 dakika)
 
 **Hedef**: Bulguları beş madde halinde topla, sınırları ve future work'ü konuş.
 
@@ -188,7 +188,7 @@
 > Tablodaki standart sapmaları üst üste koyduğumuzda %95 güven aralıkları örtüşüyor. Yani gözlenen küçük farklar tohum varyasyonu içinde kalıyor. 10 tohum azdı, normalde 30 tohum ile t-test yapılırdı; bu projedeki hesaplama bütçesi içinde kalmaya çalıştık.
 
 **S5 — "Kim ne yaptı?"**
-> Raporda detayı var ama özetle: Üye 1 problem framing + literatür, Üye 2 GA core, Üye 3 deney pipeline + mutasyon operatörleri, Üye 4 web visualiser + E2E test + dokümantasyon.
+> Raporda detayı var ama özetle: Emre problem framing + literatür, Anıl GA core, Mustafa deney pipeline + mutasyon operatörleri, Meriç web visualiser + E2E test + dokümantasyon.
 
 **S6 — "Random instance'ı nasıl ürettiniz?"**
 > Aynı seedable PRNG ile. `select instance: random-30` veya `random-100`. Bilinen optimum yok dolayısıyla "gap" görüntülenmez ama operatörler kıyaslanabilir.
@@ -201,7 +201,7 @@
 - `presentation/assets/09-app-fullshot.png` (tam ekran şot) + `04-route-final.png` + `05-fitness-final.png` görsellerini ardışık aç. Anlatımı bu görseller üzerinden yap; "canlı" deyimini "şu çekimde gördüğümüz gibi" diye değiştir.
 
 **Deney suite Run'a tıklayınca tablo gelmiyorsa**:
-- Üye 3 önceden hazırlanmış CSV'leri açar: `report/data/mutation_op_berlin52.csv` ve `selection_method_berlin52.csv`. Numbersa veya VS Code'da göster.
+- Mustafa önceden hazırlanmış CSV'leri açar: `report/data/mutation_op_berlin52.csv` ve `selection_method_berlin52.csv`. Numbersa veya VS Code'da göster.
 
 **Soru gelirse ama hiçbiri kişisel uzmanlık alanında değilse**:
 - "İyi soru, bunu raporun X. bölümünde tartışıyoruz, demo sonrası göstermekten memnuniyet duyarım" — sonra şu nota dönün: konvergence eğrisi, deney suite çıktıları, IEEE raporu.

@@ -5,16 +5,16 @@
 
 | Sıra | Soru | Kim | Süre |
 |---|---|---|---|
-| 1 | **Hangi konuyu seçtik?** | Üye 1 | ~1.5 dk |
-| 2 | **Neleri test etmeyi amaçladık?** | Üye 2 | ~1.5 dk |
-| 3 | **Nasıl test ettik?** | Üye 3 | ~1.5 dk |
-| 4 | **Neleri gözlemledik?** | Üye 4 | ~1.5 dk |
+| 1 | **Hangi konuyu seçtik?** | Emre Yıldız | ~1.5 dk |
+| 2 | **Neleri test etmeyi amaçladık?** | Anıl Aygün | ~1.5 dk |
+| 3 | **Nasıl test ettik?** | Mustafa Yiğit Güzel | ~1.5 dk |
+| 4 | **Neleri gözlemledik?** | Meriç Özkayagan | ~1.5 dk |
 
 **Ekran**: http://localhost:3000 açık, **berlin52** seçili, Reset state.
 
 ---
 
-## 1 — Üye 1: Hangi konuyu seçtik? (~1.5 dakika)
+## 1 — Emre Yıldız: Hangi konuyu seçtik? (~1.5 dakika)
 
 > Selam, biz dört kişiyiz, projemiz **Gezgin Satıcı Problemi'ne Genetik Algoritma uygulaması**.
 >
@@ -26,13 +26,13 @@
 >
 > **Neden bu konu**: TSP, EC literatüründe **klasik benchmark** — operatör karşılaştırmaları için bir referans nokta var (TSPLIB'in bilinen optimumu 7542) ve sonuçlar görsel olarak doğrulanabiliyor. Yani hem akademik olarak sağlam, hem de demoda neyin işe yaradığını gözle görebiliyorsunuz.
 >
-> Şimdi [Üye 2] neyi test etmek istediğimizi anlatacak.
+> Şimdi Anıl neyi test etmek istediğimizi anlatacak.
 
 **Stage**: Sadece ekrandaki noktaları işaret et. Start'a basma.
 
 ---
 
-## 2 — Üye 2: Neleri test etmeyi amaçladık? (~1.5 dakika)
+## 2 — Anıl Aygün: Neleri test etmeyi amaçladık? (~1.5 dakika)
 
 > Genetik Algoritma'da onlarca operatör var. Biri için "en iyisi" diğeri için kötü olabilir. Biz **dört soru**ya cevap arıyorduk:
 >
@@ -50,13 +50,13 @@
 >
 > **4. Parametreler (mutasyon oranı, popülasyon büyüklüğü) ne kadar önemli?**
 >
-> Yani hipotezimiz şuydu: **operatör seçimi, ince ayar parametrelerinden daha belirleyicidir.** Şimdi nasıl test ettiğimize [Üye 3] geçecek.
+> Yani hipotezimiz şuydu: **operatör seçimi, ince ayar parametrelerinden daha belirleyicidir.** Şimdi nasıl test ettiğimize Mustafa geçecek.
 
 **Stage**: Konuşurken dropdown'lara *fareyle* göster — açıp kapatmaya gerek yok.
 
 ---
 
-## 3 — Üye 3: Nasıl test ettik? (~1.5 dakika)
+## 3 — Mustafa Yiğit Güzel: Nasıl test ettik? (~1.5 dakika)
 
 > İki şey yaptık — biri görsel, biri sayısal.
 >
@@ -78,13 +78,13 @@
 >
 > İşte 5 tohum × 3 operatör = 15 çalıştırma. Headless versiyon raporda **10 tohum** kullandı — toplam 360 GA koşturması. Hepsinin verisi `report/data/` altında CSV olarak duruyor.
 >
-> Bulgular için sıra [Üye 4]'te.
+> Bulgular için sıra Meriç'te.
 
 **Stage direction**: Eğer Run sonucu 3 saniyede gelmezse fareyi tabloya götür ve "şu an çalışıyor" de — gözlerin tabloya kilitlensin.
 
 ---
 
-## 4 — Üye 4: Neleri gözlemledik? (~1.5 dakika)
+## 4 — Meriç Özkayagan: Neleri gözlemledik? (~1.5 dakika)
 
 > Dört temel bulgu:
 >
@@ -106,10 +106,10 @@
 
 ## Hızlı toparlama (eğer hoca "kim ne yaptı" sorarsa)
 
-- **Üye 1**: Konu seçimi + literatür taraması (8 makale)
-- **Üye 2**: GA core kod (operatörler, evrim döngüsü)
-- **Üye 3**: Deney pipeline + CSV pipeline
-- **Üye 4**: Görsel uygulama + raporlama
+- **Emre Yıldız (05210000222)**: Konu seçimi + literatür taraması (8 makale)
+- **Anıl Aygün (05210000229)**: GA core kod (operatörler, evrim döngüsü)
+- **Mustafa Yiğit Güzel (05210000209)**: Deney pipeline + CSV pipeline
+- **Meriç Özkayagan (05230001155)**: Görsel uygulama + raporlama
 
 ## Demo öncesi 30 saniyelik kontrol
 
