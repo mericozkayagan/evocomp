@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GA-TSP — Evolutionary Computing Project
 
-## Getting Started
+Genetic algorithm for the Traveling Salesperson Problem.
+Ege University · Computer Engineering · Evolutionary Computing, Spring 2026.
 
-First, run the development server:
+## What's in here
+
+- `lib/ga.ts` — permutation-encoded GA: tournament/roulette/rank selection,
+  OX1 + PMX crossover, swap/inversion/scramble mutation, elitism.
+- `lib/tsp.ts` — TSP fitness, distance matrix.
+- `lib/tsplib.ts` — bundled `berlin52` (opt 7542), `eil51` (opt 426),
+  random instance generator.
+- `lib/experiments.ts` — batch experiment driver with mean / std / gap
+  aggregation.
+- `app/page.tsx` — interactive web demo (cities + route + fitness curve).
+- `app/experiments/page.tsx` — in-browser experiment runner.
+- `scripts/run-experiments.ts` — headless runner that produces the CSVs in
+  `report/data/` (used to fill the IEEE report tables).
+- `report/main.tex` — IEEE conference paper draft (IEEEtran).
+- `report/data/*.csv` — raw experiment results.
+
+## Run
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev               # http://localhost:3000 (or 3001 if 3000 busy)
+npx tsx scripts/run-experiments.ts   # ~3 min, regenerates CSVs
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Compile the report
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+LaTeX is not installed on this machine. Two options:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Overleaf**: upload `report/main.tex` to <https://www.overleaf.com>,
+   click Recompile.
+2. **Local**: install MacTeX (`brew install --cask mactex-no-gui`), then:
+   ```bash
+   cd report && pdflatex main.tex && pdflatex main.tex
+   ```
+   Two passes are needed for cross-references.
 
-## Learn More
+## Reproducibility
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+All randomness is driven by Mulberry32 seeded with an integer. Same seed
+plus same parameters → identical evolution.

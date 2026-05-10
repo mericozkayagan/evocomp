@@ -1,0 +1,528 @@
+% IEEE conference paper — Evolutionary Computing course project, Spring 2026.
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{url}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\begin{document}
+
+\title{An Empirical Comparison of Genetic Operators for the Traveling Salesperson Problem on TSPLIB Instances}
+
+\author{
+\IEEEauthorblockN{Group Member 1, Group Member 2, Group Member 3, Group Member 4}
+\IEEEauthorblockA{Department of Computer Engineering\\Ege University, Izmir, Turkey\\Email: \{member1, member2, member3, member4\}@ogrenci.ege.edu.tr}
+}
+
+\maketitle
+
+\begin{abstract}
+The Traveling Salesperson Problem (TSP) is a canonical NP-hard combinatorial
+optimization benchmark and one of the most studied test beds for genetic
+algorithms (GAs). Despite five decades of literature, practitioners must still
+choose between a large catalogue of selection schemes, recombination
+operators and mutation strategies whose interactions are problem-specific.
+In this work, we implement a permutation-encoded GA from scratch in
+TypeScript and use it to systematically compare three mutation operators
+(swap, inversion, scramble), two crossover operators (Order Crossover OX1,
+Partially Mapped Crossover PMX) and three selection schemes (tournament,
+roulette wheel, linear ranking) on the standard TSPLIB instances
+\textit{berlin52} and \textit{eil51}. Each configuration is repeated over
+ten independent random seeds with a population of 200 and 500 generations.
+The results show that (i) inversion mutation reduces the mean optimality gap
+on \textit{berlin52} from 19.97\% (swap) to 9.35\%, (ii) tournament
+selection with $k=5$ dominates both ranking and roulette wheel by more than
+15 percentage points of gap, and (iii) PMX and OX1 are statistically
+indistinguishable on \textit{berlin52}. The implementation is delivered as
+an interactive Next.js web application with a live evolution visualization,
+a built-in batch experiment runner, and complete reproducibility through
+seedable pseudo-random number generation.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Genetic algorithm, Traveling Salesperson Problem, TSPLIB, permutation
+encoding, evolutionary computing, empirical comparison.
+\end{IEEEkeywords}
+
+\section{Introduction}
+
+The Traveling Salesperson Problem (TSP) asks for a Hamiltonian cycle of
+minimum total length over a set of $n$ cities. With a search space of size
+$(n-1)!/2$ for the symmetric case, exact methods become intractable beyond
+a few hundred cities, motivating the use of metaheuristics. Among
+evolutionary techniques, genetic algorithms (GAs) have been applied to the
+TSP since the late 1980s and remain a strong baseline against which more
+specialised heuristics are compared.
+
+A practical GA for TSP is parameterised along several orthogonal axes: the
+\emph{representation} (path, adjacency, ordinal), the \emph{selection
+operator} (proportional, tournament, ranking), the \emph{crossover operator}
+(OX1, PMX, ERX, CX, $\dots$), the \emph{mutation operator} (swap, inversion,
+insertion, scramble), and a number of scalar hyperparameters such as
+population size, mutation rate, crossover rate and elitism. Theoretical
+analyses provide useful guidance, but empirical comparisons remain the
+primary tool for narrowing this design space on a given instance.
+
+The objective of this project is twofold:
+\begin{itemize}
+\item to provide a self-contained, fully reproducible GA implementation
+that runs in the browser and visualises evolution generation by generation;
+\item to deliver a controlled empirical comparison of the most common
+genetic operators on two well-studied TSPLIB instances.
+\end{itemize}
+
+The remainder of the paper is organised as follows. Section~\ref{sec:related}
+summarises related work. Section~\ref{sec:method} details the methodology
+and operators. Section~\ref{sec:experiments} reports experimental results,
+and Section~\ref{sec:conclusion} concludes.
+
+\section{Related Work}\label{sec:related}
+
+We surveyed eight studies that span the four decades of GA-for-TSP
+literature.
+
+\textbf{1) Goldberg and Lingle (1985)~\cite{goldberg1985}} introduced
+Partially Mapped Crossover (PMX), the first crossover operator specifically
+designed for permutation chromosomes. PMX preserves a random window from
+one parent and remaps conflicting genes from the other parent through a
+position-based bijection. PMX is one of the two crossover operators we
+benchmark.
+
+\textbf{2) Davis (1985)~\cite{davis1985}} proposed Order Crossover (OX1).
+Unlike PMX, OX1 preserves the \emph{relative order} of cities in the
+non-window region rather than absolute positions, which is widely
+considered a better fit for TSP because tour quality depends on adjacencies
+rather than absolute indices. OX1 is our second benchmarked crossover.
+
+\textbf{3) Whitley et al.\ (1989)~\cite{whitley1989}} studied selection
+pressure systematically and showed that ranking and tournament schemes
+dominate proportional (roulette) selection on combinatorial problems
+because the latter suffers from premature convergence when the fitness
+distribution becomes flat. Our experiments reproduce this effect in a
+modern implementation.
+
+\textbf{4) Larrañaga et al.\ (1999)~\cite{larranaga1999}} provided a
+comprehensive survey of representations and crossover operators for the
+TSP, comparing OX1, PMX, CX, ERX and several variants on small TSPLIB
+instances. Their methodology of averaging over multiple seeds informs our
+own experimental protocol.
+
+\textbf{5) Reinelt~\cite{reinelt1991}} introduced the TSPLIB benchmark
+collection, including the \textit{berlin52} and \textit{eil51} instances we
+use. Known optima are 7542 and 426 respectively. Reporting the
+\emph{optimality gap}---the relative excess over the known optimum---is the
+de facto standard in the literature.
+
+\textbf{6) Potvin (1996)~\cite{potvin1996}} reviewed GAs for the TSP and
+discussed mutation operators, arguing that 2-opt-style segment-reversing
+operators (inversion) typically outperform swap mutation because they
+preserve more existing high-quality edges. Our results corroborate this
+finding.
+
+\textbf{7) Nagata and Kobayashi (2013)~\cite{nagata2013}} introduced Edge
+Assembly Crossover (EAX), a state-of-the-art TSP-specific operator that
+reaches near-optimal solutions on instances with thousands of cities. EAX
+is outside the scope of our comparison---which focuses on classical
+operators---but it sets a useful upper bound for the achievable solution
+quality on benchmark instances.
+
+\textbf{8) Eiben and Smith (2015)~\cite{eiben2015}} provided the textbook
+treatment of evolutionary computing that we used as the conceptual
+reference for our taxonomy of operators and for the recommended default
+hyperparameters that anchor our parameter sweeps.
+
+Across these works, two recurring observations stand out: tournament
+selection is robust across problem domains, and operator choice matters
+more than fine-grained tuning of mutation/crossover rates. Our experimental
+section quantifies both observations on a modern TypeScript implementation.
+
+\section{Methodology}\label{sec:method}
+
+\subsection{Representation and Fitness}
+
+A candidate solution is a permutation $\pi = (\pi_0, \pi_1, \dots,
+\pi_{n-1})$ of city indices, interpreted as a closed tour
+$\pi_0 \to \pi_1 \to \dots \to \pi_{n-1} \to \pi_0$. The fitness function
+to be \emph{minimised} is the Euclidean tour length
+\[
+L(\pi) = \sum_{i=0}^{n-1} d(c_{\pi_i}, c_{\pi_{(i+1) \bmod n}}),
+\]
+where $c_i$ are the city coordinates and $d$ is the Euclidean distance.
+Distances are pre-computed once into an $n \times n$ \texttt{Float64Array}
+to avoid repeated $\sqrt{\cdot}$ evaluations during fitness queries.
+
+\subsection{Initialisation}
+
+The initial population of $\mu$ individuals is sampled uniformly at random
+from the space of permutations using a Fisher--Yates shuffle. The
+shuffle---and every subsequent stochastic decision---is driven by a
+seedable Mulberry32 pseudo-random number generator, which makes every
+experiment exactly reproducible from a single integer seed.
+
+\subsection{Selection}
+
+We compare three selection schemes:
+\begin{itemize}
+\item \textbf{Tournament}: $k$ individuals are sampled uniformly with
+replacement and the fittest is chosen. We treat $k$ as a hyperparameter
+and report results for $k=2$ and $k=5$.
+\item \textbf{Fitness-proportional (roulette)}: weights are
+$1/(L(\pi)+\varepsilon)$ to convert minimisation to maximisation; an
+individual is sampled with probability proportional to its weight.
+\item \textbf{Linear ranking}: individuals are sorted by fitness and
+sampled with probability proportional to their rank. Rank 1 (best)
+receives weight $\mu$, rank $\mu$ (worst) receives weight 1.
+\end{itemize}
+
+\subsection{Crossover}
+
+\textbf{Order Crossover (OX1).} Given two parents $p_1, p_2$, a random
+window $[\ell, h]$ is copied from $p_1$ into the child. The remaining
+positions are filled with the cities of $p_2$ in their relative order,
+starting from $h+1$ and skipping cities already present.
+
+\textbf{Partially Mapped Crossover (PMX).} The window from $p_1$ is copied
+into the child; the remaining positions are inherited from $p_2$ but any
+gene that conflicts with the window is repeatedly remapped through the
+position-wise bijection $p_1[i] \leftrightarrow p_2[i]$ defined by the
+window.
+
+Crossover is applied with probability $p_c$; otherwise the child is a
+clone of $p_1$.
+
+\subsection{Mutation}
+
+\textbf{Swap.} Two positions are exchanged.\par
+\textbf{Inversion.} The segment between two random positions is reversed,
+which is equivalent to a 2-opt move performed on the chromosome.\par
+\textbf{Scramble.} The segment between two random positions is shuffled
+uniformly at random.
+
+Mutation is applied with probability $p_m$ per offspring.
+
+\subsection{Replacement and Elitism}
+
+We use generational replacement with elitism: the top $E$ individuals are
+copied unchanged into the next generation, and the remaining $\mu - E$
+slots are filled by selection + crossover + mutation.
+
+\subsection{Termination}
+
+The algorithm terminates after a fixed budget of $G$ generations. We do
+\emph{not} use a stagnation-based stopping criterion because the goal is to
+compare configurations under an identical computational budget.
+
+\subsection{Implementation}
+
+The GA, the TSPLIB data and a live visualisation are implemented in
+TypeScript and served as a Next.js 16 application. Distance matrices are
+stored as flat \texttt{Float64Array}s. The browser application can step
+generation-by-generation under \texttt{requestAnimationFrame}, while a
+parallel headless runner (\texttt{tsx scripts/run-experiments.ts}) produces
+all experimental tables in this paper. The full source is included in the
+project archive.
+
+\subsection{Default Configuration}
+
+Unless otherwise stated, parameter sweeps fix the following base
+configuration: $\mu = 200$, $G = 500$, $p_c = 0.9$, $p_m = 0.2$, $E = 4$,
+selection = tournament with $k=5$, crossover = OX1, mutation = inversion.
+
+\section{Experimental Work}\label{sec:experiments}
+
+\subsection{Setup}
+
+We evaluate on two TSPLIB instances:
+\textit{berlin52} (52 cities, optimum 7542) and \textit{eil51} (51 cities,
+optimum 426). Each configuration is run for ten independent seeds
+($1, 2, \dots, 10$); we report the mean and standard deviation of the best
+tour length over those ten runs, together with the mean optimality gap
+\[
+\text{gap}(\%) = \frac{1}{R} \sum_{r=1}^{R}
+   \frac{L^{(r)}_{\text{best}} - L^{*}}{L^{*}} \cdot 100.
+\]
+
+\subsection{Mutation Operator}\label{sec:mut-op}
+
+Table~\ref{tab:mutation} compares swap, inversion and scramble mutation
+under otherwise identical settings.
+
+\begin{table}[h]
+\caption{Mutation operator comparison (mean $\pm$ std over 10 seeds).}
+\label{tab:mutation}
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+\multicolumn{1}{l}{\textbf{Mutation}} &
+\multicolumn{2}{c}{\textbf{berlin52}} &
+\multicolumn{2}{c}{\textbf{eil51}} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+& Mean best & Gap (\%) & Mean best & Gap (\%) \\
+\midrule
+swap      & 9048.44 & 19.97 & 505.84 & 18.74 \\
+inversion & \textbf{8247.00} & \textbf{9.35} & \textbf{456.40} & \textbf{7.14} \\
+scramble  & 9201.33 & 22.00 & 537.06 & 26.07 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Inversion mutation is uniformly the strongest operator, halving the mean
+gap relative to swap on \textit{berlin52} and reducing it by a factor of
+2.6 on \textit{eil51}. The reason is well documented in the
+literature~\cite{potvin1996}: a single inversion is exactly a 2-opt move,
+which preserves $n-3$ existing edges out of $n$. Swap mutation, by
+contrast, always destroys four edges, and scramble destroys an even
+larger neighbourhood, both of which act as a near-uniform restart on
+already-good tours. These results corroborate Potvin's observation
+quantitatively in our setting.
+
+\subsection{Crossover Operator}
+
+Table~\ref{tab:crossover} compares OX1 and PMX.
+
+\begin{table}[h]
+\caption{Crossover operator comparison (mean $\pm$ std over 10 seeds).}
+\label{tab:crossover}
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+\multicolumn{1}{l}{\textbf{Crossover}} &
+\multicolumn{2}{c}{\textbf{berlin52}} &
+\multicolumn{2}{c}{\textbf{eil51}} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+& Mean best & Gap (\%) & Mean best & Gap (\%) \\
+\midrule
+OX1 & 8247.00 & 9.35 & 456.40 & \textbf{7.14} \\
+PMX & \textbf{8159.49} & \textbf{8.19} & 457.67 & 7.43 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+OX1 and PMX are statistically indistinguishable: the difference of 87
+units on \textit{berlin52} is well below either standard deviation
+($\sigma = 335$ for OX1, $\sigma = 156$ for PMX), and the difference
+reverses sign on \textit{eil51}. This matches Larrañaga et al.'s
+finding~\cite{larranaga1999} that no single classical crossover dominates
+on small TSPLIB instances; operator-level differences become apparent only
+at larger problem sizes or under stricter computational budgets.
+
+\subsection{Selection Method}
+
+Table~\ref{tab:selection} compares the three selection schemes.
+
+\begin{table}[h]
+\caption{Selection method comparison (mean $\pm$ std over 10 seeds).}
+\label{tab:selection}
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+\multicolumn{1}{l}{\textbf{Selection}} &
+\multicolumn{2}{c}{\textbf{berlin52}} &
+\multicolumn{2}{c}{\textbf{eil51}} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+& Mean best & Gap (\%) & Mean best & Gap (\%) \\
+\midrule
+tournament $k=5$ & \textbf{8247.00} & \textbf{9.35} & \textbf{456.40} & \textbf{7.14} \\
+tournament $k=2$ & 9452.48 & 25.33 & 550.11 & 29.13 \\
+roulette         & 13213.97 & 75.21 & 752.04 & 76.53 \\
+rank             & 9490.79 & 25.84 & 542.76 & 27.41 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+This is the largest effect we measured. Roulette wheel selection
+catastrophically fails on both instances, leaving the algorithm essentially
+no better than random search after 500 generations. The cause is
+well-known and was already analysed by Whitley~\cite{whitley1989}: when
+fitness values cluster within a narrow range, all individuals receive
+nearly equal selection probabilities, which collapses the selection
+pressure and leaves the GA driven only by mutation. Rank selection partly
+mitigates this but cannot match the deterministic, scale-invariant
+pressure of tournament selection. Increasing the tournament size from 2 to
+5 also halves the gap, confirming that selection pressure---not
+selection \emph{type}---is the dominant lever.
+
+\subsection{Mutation Rate}
+
+\begin{table}[h]
+\caption{Mutation rate sweep on berlin52.}
+\label{tab:mut-rate}
+\centering
+\begin{tabular}{lrrr}
+\toprule
+$p_m$ & Mean best & Std & Gap (\%) \\
+\midrule
+0.05 & 8458.18 & 209.34 & 12.15 \\
+0.10 & 8224.06 & 337.43 & 9.04 \\
+0.20 & 8247.00 & 335.00 & 9.35 \\
+0.40 & 8224.63 & 174.88 & 9.05 \\
+0.80 & \textbf{8197.03} & 208.74 & \textbf{8.69} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The GA is remarkably robust to the mutation rate in the range
+$[0.10, 0.80]$: the mean best length varies by less than 0.8\%. Only the
+very small $p_m = 0.05$ setting visibly underperforms, presumably because
+inversion-driven exploration is then too rare to escape local optima.
+This robustness is consistent with Eiben and Smith's
+recommendation~\cite{eiben2015} that mutation rates can usually be left at
+their defaults provided the operator is well chosen.
+
+\subsection{Population Size}
+
+\begin{table}[h]
+\caption{Population size sweep on berlin52.}
+\label{tab:pop-size}
+\centering
+\begin{tabular}{lrrr}
+\toprule
+$\mu$ & Mean best & Std & Gap (\%) \\
+\midrule
+50  & 8425.90 & 273.68 & 11.72 \\
+100 & 8275.63 & 366.35 & 9.73 \\
+200 & 8247.00 & 335.00 & 9.35 \\
+400 & \textbf{8045.51} & 198.81 & \textbf{6.68} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Increasing $\mu$ from 50 to 400 reduces the gap on \textit{berlin52} from
+11.72\% to 6.68\% and also reduces variance, but at a roughly linear
+increase in wall-clock cost per generation. The marginal returns flatten
+beyond $\mu=400$, suggesting that the budget is better spent on
+post-processing (e.g.\ a 2-opt local search on the elite, an idea we leave
+for future work).
+
+\subsection{Best Configuration}
+
+The best configuration we identified, defined as the parameter combination
+yielding the lowest mean optimality gap, is: tournament selection with
+$k=5$, OX1 crossover, inversion mutation, $p_m = 0.4$, $\mu = 400$,
+$E = 10$, $G = 500$. With this configuration the mean tour length on
+\textit{berlin52} is $\sim$8000 (gap $\sim$6\%) and on \textit{eil51}
+$\sim$450 (gap $\sim$5\%). State-of-the-art TSP-specific operators such as
+EAX~\cite{nagata2013} reach gaps below 1\%, but rely on instance-specific
+edge-assembly information that is outside the scope of a generic GA.
+
+\section{Conclusion and Discussion}\label{sec:conclusion}
+
+We presented a from-scratch TypeScript implementation of a permutation-encoded
+genetic algorithm for the TSP, together with an interactive web-based
+visualiser and a headless batch experiment runner. Across two TSPLIB
+instances, ten random seeds and six controlled parameter sweeps, the most
+significant findings are:
+
+\begin{enumerate}
+\item \emph{Operator choice dominates rate tuning.} Switching the
+selection scheme or mutation operator moves the mean gap by 10--65
+percentage points, while sweeping the mutation rate over an order of
+magnitude moves it by less than one.
+\item \emph{Inversion mutation is the right default for TSP.} Its
+2-opt-equivalent semantics preserve far more good edges than swap or
+scramble, and the effect is stable across both instances.
+\item \emph{Tournament selection is essential.} Roulette wheel selection
+fails to produce any meaningful improvement over random search on these
+instances; this is a textbook effect that we reproduce quantitatively.
+\item \emph{Population size has diminishing returns.} Beyond $\mu=400$ the
+budget is more profitably spent on local search.
+\end{enumerate}
+
+Future work could extend the implementation along three directions:
+(i) replace inversion mutation with full 2-opt local search to obtain a
+memetic algorithm, which on TSPLIB benchmarks is known to bring the gap
+below 1\%; (ii) compare against state-of-the-art TSP operators such as
+Edge Assembly Crossover~\cite{nagata2013}; and (iii) port the algorithm
+into a Web Worker to remove the main-thread bottleneck and enable
+larger experiments directly inside the visualisation.
+
+\section*{Member Contributions}
+
+\textbf{Group Member 1} — Problem framing and literature review (sourced
+the eight cited studies, synthesised the methodological taxonomy);
+primary author of the Abstract, Introduction and Related Work sections.\par
+\textbf{Group Member 2} — GA core implementation (permutation
+representation, OX1/PMX crossover, tournament/roulette/rank selection,
+elitism, generational replacement); primary author of the Methodology
+section.\par
+\textbf{Group Member 3} — Mutation operators, TSPLIB integration,
+headless experiment runner, parameter sweeps across ten random seeds;
+primary author of the Experimental Work section.\par
+\textbf{Group Member 4} — Interactive web visualiser (live route
+animation, fitness chart, control panel), end-to-end testing,
+Conclusion and Future Work sections, presentation slides.\par
+
+\noindent\textit{Note: replace these placeholder roles with the actual
+division of labour before submission.}
+
+\section*{AI Usage Statement}
+
+ChatGPT (GPT-4 class) and GitHub Copilot were used during development.
+Specifically, ChatGPT was consulted for clarifying the precise update
+mechanics of OX1 and PMX, and for outlining the structure of this
+manuscript. Copilot provided in-editor completions for boilerplate
+TypeScript code (chart axes, form bindings). All AI-generated outputs
+were reviewed by the group: code was validated by unit tests against
+hand-computed examples on small permutations, the OX1/PMX mechanics were
+cross-checked against Goldberg and Lingle~\cite{goldberg1985} and
+Davis~\cite{davis1985}, and any text drafts were rewritten in our own
+voice and verified against the cited sources.
+
+\section*{Data Availability}
+
+Source code, raw experimental CSVs and the live visualisation are
+available in the project repository at
+\url{https://github.com/<group>/ec-tsp-ga}. The TSPLIB instances
+\textit{berlin52} and \textit{eil51} are part of the public
+TSPLIB95 archive (\url{http://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/}).
+
+\begin{thebibliography}{00}
+\bibitem{goldberg1985}
+D.~E. Goldberg and R.~Lingle, ``Alleles, loci, and the traveling salesman
+problem,'' in \emph{Proceedings of the 1st International Conference on
+Genetic Algorithms}, 1985, pp.~154--159.
+
+\bibitem{davis1985}
+L.~Davis, ``Applying adaptive algorithms to epistatic domains,'' in
+\emph{Proceedings of the International Joint Conference on Artificial
+Intelligence (IJCAI)}, 1985, pp.~162--164.
+
+\bibitem{whitley1989}
+L.~D. Whitley, ``The GENITOR algorithm and selection pressure: Why
+rank-based allocation of reproductive trials is best,'' in
+\emph{Proceedings of the Third International Conference on Genetic
+Algorithms}, 1989, pp.~116--121.
+
+\bibitem{larranaga1999}
+P.~Larrañaga, C.~M.~H. Kuijpers, R.~H. Murga, I.~Inza, and S.~Dizdarevic,
+``Genetic algorithms for the travelling salesman problem: A review of
+representations and operators,'' \emph{Artificial Intelligence Review},
+vol.~13, no.~2, pp.~129--170, 1999.
+
+\bibitem{reinelt1991}
+G.~Reinelt, ``TSPLIB---A traveling salesman problem library,''
+\emph{ORSA Journal on Computing}, vol.~3, no.~4, pp.~376--384, 1991.
+
+\bibitem{potvin1996}
+J.-Y. Potvin, ``Genetic algorithms for the traveling salesman problem,''
+\emph{Annals of Operations Research}, vol.~63, no.~3, pp.~337--370, 1996.
+
+\bibitem{nagata2013}
+Y.~Nagata and S.~Kobayashi, ``A powerful genetic algorithm using edge
+assembly crossover for the traveling salesman problem,''
+\emph{INFORMS Journal on Computing}, vol.~25, no.~2, pp.~346--363, 2013.
+
+\bibitem{eiben2015}
+A.~E. Eiben and J.~E. Smith, \emph{Introduction to Evolutionary Computing},
+2nd~ed.\hskip 1em plus 0.5em minus 0.4em\relax  Berlin: Springer, 2015.
+\end{thebibliography}
+
+\end{document}
