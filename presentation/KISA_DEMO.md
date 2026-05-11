@@ -16,19 +16,23 @@
 
 ## 1 — Emre Yıldız: Hangi konuyu seçtik? (~1.5 dakika)
 
-> Selam, biz dört kişiyiz, projemiz **Gezgin Satıcı Problemi'ne Genetik Algoritma uygulaması**.
+> Merhaba, ben Emre. Anıl, Mustafa ve Meriç ile birlikte bir proje yaptık. Konumuz tek bir soruya cevap veriyor: **bir bilgisayara, bir sürü noktayı en kısa yoldan gezmesi nasıl öğretilir?**
 >
-> [Ekranı göster — kırmızı noktalar]
+> [Ekrandaki kırmızı noktalara işaret et]
 >
-> Ekranda gördüğünüz **52 kırmızı nokta**, **TSPLIB**'in `berlin52` benchmark'ı — Berlin'de 52 lokasyon. Soru basit: bu 52 yeri **her birini tam bir kez** ziyaret ederek **en kısa turla** nasıl gezeriz?
+> Ekranda gördüğünüz kırmızı noktalar bizim şehirlerimiz — toplam **52 tane**. Bunlar Berlin haritasından alınmış gerçek lokasyonlar; akademik bir veri setinden geliyor, yani bu problem üzerinde dünyada çalışan başkalarıyla sonuçlarımızı karşılaştırabiliyoruz.
 >
-> Problem basit gibi ama 52 şehir için olası tur sayısı 51 faktöriyel bölü 2, yani yaklaşık 8 × 10⁶⁶. Brute force ölü. Bu yüzden **metaheuristic**'lerden Genetik Algoritma'yı seçtik.
+> Hayal edin bir kargo şoförüsünüz. Bu 52 şehrin **hepsine bir kez** uğrayıp eve dönmeniz lazım. Sorumuz şu: **hangi sırayla giderseniz toplam yol en kısa olur?**
 >
-> **Neden bu konu**: TSP, EC literatüründe **klasik benchmark** — operatör karşılaştırmaları için bir referans nokta var (TSPLIB'in bilinen optimumu 7542) ve sonuçlar görsel olarak doğrulanabiliyor. Yani hem akademik olarak sağlam, hem de demoda neyin işe yaradığını gözle görebiliyorsunuz.
+> Kulağa basit geliyor değil mi? Ama sadece 52 şehir için bile, deneyebileceğiniz farklı sıralamaların sayısı **astronomik** — evrendeki atom sayısından daha fazla. Bütün olasılıkları tek tek denemek bilgisayarla bile **yıllar sürer**.
 >
-> Şimdi Anıl neyi test etmek istediğimizi anlatacak.
+> Bu yüzden bilgisayara "her olasılığı dene" demek yerine, ona **doğanın yaptığı şeyi** öğrettik: evrim. Yani **Genetik Algoritma**.
+>
+> Algoritmamız bir grup rastgele rotayla başlıyor, en iyilerini seçiyor, onları "eşleştirip" yeni nesil rotalar üretiyor, biraz da rastgele değişikliklerle çeşitlendiriyor. Tıpkı doğal seçilim gibi. Birkaç yüz nesil sonra elimizde başlangıçtakilerden çok daha iyi bir rota oluyor.
+>
+> Şimdi Anıl size tam olarak neyi test etmek istediğimizi anlatacak.
 
-**Stage**: Sadece ekrandaki noktaları işaret et. Start'a basma.
+**Stage**: Sadece ekrandaki noktaları işaret et. Start'a basma — o iş Mustafa'nın. Yazıyı okuyabilirsin, ama gözlerini ara ara dinleyiciye kaldır.
 
 ---
 
@@ -104,12 +108,16 @@
 
 ---
 
-## Hızlı toparlama (eğer hoca "kim ne yaptı" sorarsa)
+## Kim ne yaptı (hocaya hazır cevap)
 
-- **Emre Yıldız (05210000222)**: Konu seçimi + literatür taraması (8 makale)
-- **Anıl Aygün (05210000229)**: GA core kod (operatörler, evrim döngüsü)
-- **Mustafa Yiğit Güzel (05210000209)**: Deney pipeline + CSV pipeline
-- **Meriç Özkayagan (05230001155)**: Görsel uygulama + raporlama
+| Üye | Öğrenci No | Sorumluluk |
+|---|---|---|
+| **Emre Yıldız** | 05210000222 | Konu araştırması, literatür taraması (8 akademik makaleyi okuduk ve referans aldık), raporun **Giriş** ve **İlgili Çalışmalar** bölümleri |
+| **Anıl Aygün** | 05210000229 | Genetik algoritmanın asıl kodu — popülasyon üretimi, seçim/çaprazlama/mutasyon operatörleri, evrim döngüsü; raporun **Yöntem** bölümü |
+| **Mustafa Yiğit Güzel** | 05210000209 | Deney altyapısı — aynı algoritmayı farklı parametrelerle 10 kere çalıştırıp ortalama-standart sapma hesaplayan otomatik test pipeline'ı, sonuç CSV'leri; raporun **Deneyler** bölümü |
+| **Meriç Özkayagan** | 05230001155 | Tarayıcıda çalışan görsel demo uygulaması (canlı evrim animasyonu + grafik), uçtan uca test, raporun **Sonuç** bölümü ve demo materyalleri |
+
+**Sorulursa**: "Her birimiz bir bölümü asıl yazdık ama tüm metni dördümüz birlikte gözden geçirdik."
 
 ## Demo öncesi 30 saniyelik kontrol
 
