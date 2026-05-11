@@ -68,12 +68,22 @@ Bütün ekip bilmeli. Demoda biri sorulursa kim cevaplarsa cevaplasın hata çı
 
 ## 🎤 2. ANIL — Neleri test etmeyi amaçladık? (1.5 dk)
 
-### Ezberlenecek 4 araştırma sorusu
+### Ezberlenecek 4 araştırma sorusu + cevapları
 
-1. **Hangi mutation daha iyi?** → swap / inversion / scramble
-2. **Hangi crossover daha iyi?** → OX1 / PMX
-3. **Hangi selection daha iyi?** → tournament / roulette / rank
-4. **Mutation rate ve popülasyon büyüklüğü ne kadar belirleyici?**
+| # | Soru | Bulgumuz | Kanıt |
+|---|---|---|---|
+| 1 | Hangi mutation daha iyi? | **Inversion** açık ara kazanır | gap %9.3 vs swap %20, scramble %22 |
+| 2 | Hangi crossover daha iyi? | **Anlamlı fark yok** | OX1 %9.3, PMX %8.2 — fark standart sapma içinde |
+| 3 | Hangi selection daha iyi? | **Tournament (k=5)** baskın | gap %9 vs rank %26, roulette %74 |
+| 4 | Mutation rate / popülasyon büyüklüğü ne kadar belirleyici? | **Rate dayanıklı, popülasyon azalan getirili** | rate 0.05→0.80'de gap sadece 1 puan değişir; popülasyon 50→400'de gap %11.7'den %6.7'ye düşer ama 400 üstü marjinal |
+
+**Bu rakamları Anıl ezberlemese de olur — yalnızca soru gelirse "evet onu test ettik, bulgumuz şu" diyebilmesi yeterli.** Detaylı rakamlar Mustafa'nın ve Meriç'in kartlarında. Anıl'ın görevi: **soruları sormak, cevapları teaser olarak vermek**, asıl tabloları Mustafa göstersin.
+
+### Bu kısımda nasıl konuşulur (önerilen tempo)
+
+> "Dört soruya cevap arıyorduk. Birinci — hangi mutation operatörü daha iyi? İkinci — crossover'da OX1 mı PMX mi? Üçüncü — selection method ne kadar fark eder? Dördüncü — rate ve popülasyon büyüklüğü gibi parametreler operatör seçiminden daha mı önemli?
+>
+> Spoiler vermek istemiyorum, sayıları Mustafa ve Meriç gösterecek — ama özetle: operatör seçimi parametrelerden çok daha belirleyici çıktı."
 
 ### Hipotezimiz (TEK CÜMLE — ezberle)
 
