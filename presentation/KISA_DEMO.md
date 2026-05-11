@@ -16,23 +16,24 @@
 
 ## 1 — Emre Yıldız: Hangi konuyu seçtik? (~1.5 dakika)
 
-> Merhaba, ben Emre. Anıl, Mustafa ve Meriç ile birlikte bir proje yaptık. Konumuz tek bir soruya cevap veriyor: **bir bilgisayara, bir sürü noktayı en kısa yoldan gezmesi nasıl öğretilir?**
+> Merhaba, ben Emre. Anıl, Mustafa ve Meriç ile birlikte **Gezgin Satıcı Problemi'ne — yani TSP'ye — Genetik Algoritma uygulaması** üzerine çalıştık.
 >
 > [Ekrandaki kırmızı noktalara işaret et]
 >
-> Ekranda gördüğünüz kırmızı noktalar bizim şehirlerimiz — toplam **52 tane**. Bunlar Berlin haritasından alınmış gerçek lokasyonlar; akademik bir veri setinden geliyor, yani bu problem üzerinde dünyada çalışan başkalarıyla sonuçlarımızı karşılaştırabiliyoruz.
+> Ekrandaki **52 nokta**, TSPLIB veri setinden aldığımız **berlin52 instance'ı**. Berlin'in 52 lokasyonu. TSPLIB'i seçmemizin sebebi, literatürdeki **bilinen optimum tur uzunluğu** ile sonuçlarımızı doğrudan karşılaştırabilmek — burada optimum **7542**.
 >
-> Hayal edin bir kargo şoförüsünüz. Bu 52 şehrin **hepsine bir kez** uğrayıp eve dönmeniz lazım. Sorumuz şu: **hangi sırayla giderseniz toplam yol en kısa olur?**
+> Problem klasik: bu 52 düğümü her birini tam bir kez ziyaret eden minimum maliyetli Hamiltonian döngüsünü bulmak. Karar problemi olarak **NP-complete**, optimizasyon versiyonu **NP-hard**. Yani bilinen polinom zamanlı kesin çözümü yok. Olası tur sayısı **(n-1)! / 2**, bizim instance için yaklaşık **10⁶⁶** mertebesinde. Brute force matematiksel olarak imkânsız.
 >
-> Kulağa basit geliyor değil mi? Ama sadece 52 şehir için bile, deneyebileceğiniz farklı sıralamaların sayısı **astronomik** — evrendeki atom sayısından daha fazla. Bütün olasılıkları tek tek denemek bilgisayarla bile **yıllar sürer**.
+> Bu yüzden **metaheuristic** yaklaşımlara gidiyoruz — kesin çözüm garantisi olmayan ama makul sürede iyi çözüm üreten algoritmalar. Biz bu sınıftan **Genetik Algoritma**'yı seçtik. Sebepler:
+> - **Temsil doğal**: her birey bir permütasyon, yani direkt bir tur
+> - **Operatör çeşitliliği**: literatürde onlarca selection / crossover / mutation operatörü var, kıyaslamalı çalışma için zengin tasarım uzayı
+> - **Görsel doğrulanabilirlik**: her jenerasyondaki en iyi bireyi canlı render edebiliyoruz
 >
-> Bu yüzden bilgisayara "her olasılığı dene" demek yerine, ona **doğanın yaptığı şeyi** öğrettik: evrim. Yani **Genetik Algoritma**.
+> Kabaca akış: rastgele bir başlangıç popülasyonu üretiyoruz, **fitness fonksiyonu** olarak tur uzunluğunu kullanıyoruz, her jenerasyonda selection–crossover–mutation operatörlerini uygulayıp yeni popülasyonu oluşturuyoruz. Stokastik bir global arama.
 >
-> Algoritmamız bir grup rastgele rotayla başlıyor, en iyilerini seçiyor, onları "eşleştirip" yeni nesil rotalar üretiyor, biraz da rastgele değişikliklerle çeşitlendiriyor. Tıpkı doğal seçilim gibi. Birkaç yüz nesil sonra elimizde başlangıçtakilerden çok daha iyi bir rota oluyor.
->
-> Şimdi Anıl size tam olarak neyi test etmek istediğimizi anlatacak.
+> Şimdi Anıl, tam olarak hangi tasarım kararlarını test etmek istediğimizi anlatacak.
 
-**Stage**: Sadece ekrandaki noktaları işaret et. Start'a basma — o iş Mustafa'nın. Yazıyı okuyabilirsin, ama gözlerini ara ara dinleyiciye kaldır.
+**Stage**: Sadece ekrandaki noktaları işaret et. **Start'a basma** — o iş Mustafa'nın. Metni okuyabilirsin ama gözlerini ara ara dinleyiciye kaldır. Tempo: cümle başına ~3 saniye, virgüllerde küçük pause.
 
 ---
 
